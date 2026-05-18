@@ -934,10 +934,6 @@
         Join the Waitlist
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
-      <a href="#waitlist" class="btn-secondary">
-        List Your Gym
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-      </a>
     </div>
 
   </div>
@@ -1102,29 +1098,36 @@
     <p class="reveal reveal-delay-2" style="font-size:1.05rem;color:rgba(10,10,10,0.6);font-weight:300;line-height:1.7;margin-bottom:2.5rem;max-width:480px">Whether you're looking for a gym or you own one — drop your details and we'll reach out the moment DemoKro goes live in your city.</p>
     <form id="waitlist-form" action="https://formspree.io/f/mgoqelnn" method="POST" class="reveal reveal-delay-3">
       <div class="wl-fields">
+
+        <!-- Type toggle -->
+        <div class="wl-select-row" style="margin-bottom:0.25rem">
+          <p class="wl-radio-label">I am a&hellip;</p>
+          <div class="wl-radios">
+            <label class="wl-radio"><input type="radio" name="type" value="gym-seeker" id="type-seeker" checked /><span>Gym-Seeker</span></label>
+            <label class="wl-radio"><input type="radio" name="type" value="gym-owner" id="type-owner" /><span>Gym Owner</span></label>
+          </div>
+        </div>
+
+        <!-- Shared fields -->
         <div class="wl-field-group">
           <input type="text" name="name" placeholder="Your name" required class="wl-input" />
           <input type="email" name="email" placeholder="Email address" required class="wl-input" />
+          <!-- Gym owner only -->
+          <input type="text" name="gym_name" id="field-gym-name" placeholder="Gym name" class="wl-input" style="display:none" />
           <input type="tel" name="phone" placeholder="WhatsApp number (optional)" class="wl-input" />
         </div>
-        <div class="wl-selects">
-          <div class="wl-select-row">
-            <p class="wl-radio-label">I am a&hellip;</p>
-            <div class="wl-radios">
-              <label class="wl-radio"><input type="radio" name="type" value="gym-seeker" checked /><span>Gym-Seeker</span></label>
-              <label class="wl-radio"><input type="radio" name="type" value="gym-owner" /><span>Gym Owner</span></label>
-            </div>
-          </div>
-          <div class="wl-select-row">
-            <p class="wl-radio-label">City</p>
-            <div class="wl-radios">
-              <label class="wl-radio"><input type="radio" name="city" value="karachi" checked /><span>Karachi</span></label>
-              <label class="wl-radio"><input type="radio" name="city" value="lahore" /><span>Lahore</span></label>
-              <label class="wl-radio" id="other-radio-label"><input type="radio" name="city" value="other" id="other-radio" /><span>Other</span></label>
-              <input type="text" name="city_other" id="other-city-input" placeholder="Which city?" class="wl-input" style="display:none;width:auto;flex:1;min-width:140px;padding:0.4rem 0.9rem;font-size:0.88rem" />
-            </div>
+
+        <!-- City -->
+        <div class="wl-select-row">
+          <p class="wl-radio-label">City</p>
+          <div class="wl-radios" style="flex-wrap:wrap;align-items:center">
+            <label class="wl-radio"><input type="radio" name="city" value="karachi" checked /><span>Karachi</span></label>
+            <label class="wl-radio"><input type="radio" name="city" value="lahore" /><span>Lahore</span></label>
+            <label class="wl-radio"><input type="radio" name="city" value="other" id="other-radio" /><span>Other</span></label>
+            <input type="text" name="city_other" id="other-city-input" placeholder="Which city?" class="wl-input" style="display:none;width:auto;flex:1;min-width:140px;padding:0.4rem 0.9rem;font-size:0.88rem" />
           </div>
         </div>
+
         <button type="submit" class="wl-btn" id="wl-submit">
           Join Waitlist
           <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -1296,6 +1299,20 @@
       } else {
         otherInput.style.display = 'none';
         otherInput.value = '';
+      }
+    });
+  });
+
+  var gymNameField = document.getElementById('field-gym-name');
+  document.querySelectorAll('input[name="type"]').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+      if (this.value === 'gym-owner') {
+        gymNameField.style.display = 'block';
+        gymNameField.setAttribute('required', 'required');
+      } else {
+        gymNameField.style.display = 'none';
+        gymNameField.removeAttribute('required');
+        gymNameField.value = '';
       }
     });
   });
