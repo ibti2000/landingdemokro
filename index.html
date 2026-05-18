@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DemoKro — Book a Gym Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #0a0a0a;
+    --yellow: #E8F435;
+    --yellow-dim: #c9d42e;
+    --white: #f5f5f0;
+    --gray: #1a1a1a;
+    --gray-mid: #2a2a2a;
+    --gray-text: #888880;
+    --font-display: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1.25rem 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    transition: all 0.3s ease;
+  }
+
+  .nav-logo {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.4rem;
+    color: var(--white);
+    letter-spacing: -0.02em;
+  }
+
+  .nav-logo span { color: var(--yellow); }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+    align-items: center;
+  }
+
+  .nav-links a {
+    color: var(--gray-text);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 400;
+    transition: color 0.2s;
+    letter-spacing: 0.01em;
+  }
+
+  .nav-links a:hover { color: var(--white); }
+
+  .nav-cta {
+    background: var(--yellow) !important;
+    color: var(--black) !important;
+    padding: 0.55rem 1.25rem;
+    border-radius: 100px;
+    font-weight: 500 !important;
+    font-size: 0.88rem !important;
+    transition: transform 0.2s, background 0.2s !important;
+  }
+
+  .nav-cta:hover { transform: scale(1.04); background: var(--yellow-dim) !important; }
+
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 4px;
+  }
+
+  .hamburger span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--white);
+    border-radius: 2px;
+    transition: all 0.3s;
+  }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    padding: 10rem 2.5rem 6rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .hero-circle {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(232,244,53,0.12);
+    animation: pulse-ring 6s ease-in-out infinite;
+  }
+
+  .hero-circle:nth-child(1) {
+    width: 500px; height: 500px;
+    top: -120px; right: -100px;
+    animation-delay: 0s;
+  }
+
+  .hero-circle:nth-child(2) {
+    width: 350px; height: 350px;
+    top: -45px; right: -25px;
+    border-color: rgba(232,244,53,0.18);
+    animation-delay: 1s;
+  }
+
+  .hero-circle:nth-child(3) {
+    width: 200px; height: 200px;
+    top: 30px; right: 50px;
+    border-color: rgba(232,244,53,0.25);
+    animation-delay: 2s;
+  }
+
+  .hero-dot {
+    position: absolute;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--yellow);
+    top: 85px; right: 125px;
+    animation: blink 3s ease-in-out infinite;
+  }
+
+  .grid-pattern {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(232,244,53,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(232,244,53,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 60% at 80% 20%, black, transparent);
+  }
+
+  @keyframes pulse-ring {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.03); opacity: 0.7; }
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .hero-content { position: relative; z-index: 2; max-width: 900px; }
+
+  .hero-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(232,244,53,0.1);
+    border: 1px solid rgba(232,244,53,0.2);
+    color: var(--yellow);
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.4rem 0.9rem;
+    border-radius: 100px;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .hero-label::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--yellow);
+    animation: blink 2s infinite;
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(3.2rem, 8vw, 7rem);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.4s forwards;
+  }
+
+  h1 .accent { color: var(--yellow); }
+  h1 .line2 { display: block; color: rgba(245,245,240,0.35); }
+
+  .hero-sub {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    color: var(--gray-text);
+    max-width: 520px;
+    font-weight: 300;
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.6s forwards;
+    line-height: 1.7;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.8s forwards;
+  }
+
+  .btn-primary {
+    background: var(--yellow);
+    color: var(--black);
+    padding: 0.9rem 2rem;
+    border-radius: 100px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: -0.01em;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(232,244,53,0.25);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--white);
+    padding: 0.9rem 2rem;
+    border-radius: 100px;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: -0.01em;
+    border: 1px solid rgba(255,255,255,0.2);
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+  }
+
+  .btn-secondary:hover {
+    border-color: rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.05);
+  }
+
+
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* SECTIONS */
+  section { padding: 7rem 2.5rem; }
+
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+
+  .section-tag {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--yellow);
+    margin-bottom: 1.2rem;
+    display: block;
+  }
+
+  h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    margin-bottom: 1.2rem;
+  }
+
+  .section-sub {
+    font-size: 1.05rem;
+    color: var(--gray-text);
+    max-width: 520px;
+    font-weight: 300;
+    line-height: 1.7;
+  }
+
+  /* HOW IT WORKS */
+  #how {
+    background: var(--gray);
+    border-top: 1px solid rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    margin-top: 4rem;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .step {
+    background: var(--gray);
+    padding: 3rem 2.5rem;
+    position: relative;
+    transition: background 0.3s;
+  }
+
+  .step:hover { background: #1e1e1e; }
+
+  .step-num {
+    font-family: var(--font-display);
+    font-size: 5rem;
+    font-weight: 800;
+    letter-spacing: -0.05em;
+    color: rgba(232,244,53,0.08);
+    line-height: 1;
+    margin-bottom: 1.5rem;
+    display: block;
+    transition: color 0.3s;
+  }
+
+  .step:hover .step-num { color: rgba(232,244,53,0.15); }
+
+  .step-icon {
+    width: 48px; height: 48px;
+    background: rgba(232,244,53,0.1);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(232,244,53,0.15);
+  }
+
+  .step-icon svg { width: 24px; height: 24px; stroke: var(--yellow); }
+
+  .step h3 {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.75rem;
+  }
+
+  .step p {
+    font-size: 0.92rem;
+    color: var(--gray-text);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  .step-arrow {
+    position: absolute;
+    top: 50%;
+    right: -14px;
+    transform: translateY(-50%);
+    width: 28px; height: 28px;
+    background: var(--yellow);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+  }
+
+  .step-arrow svg { width: 14px; height: 14px; stroke: var(--black); }
+
+  /* FOR USERS + OWNERS */
+  #users { padding-bottom: 0; }
+
+  .split-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 4rem;
+  }
+
+  .feature-card {
+    background: var(--gray);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 24px;
+    padding: 3rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(232,244,53,0.15);
+  }
+
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(232,244,53,0.06), transparent 70%);
+    pointer-events: none;
+  }
+
+  .card-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--yellow);
+    margin-bottom: 1.5rem;
+    display: block;
+  }
+
+  .feature-card h3 {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 2rem;
+    line-height: 1.15;
+  }
+
+  .feature-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .feature-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    font-size: 0.95rem;
+    color: rgba(245,245,240,0.75);
+    font-weight: 300;
+    line-height: 1.5;
+  }
+
+  .feature-list li::before {
+    content: '';
+    flex-shrink: 0;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: rgba(232,244,53,0.15);
+    border: 1px solid rgba(232,244,53,0.25);
+    margin-top: 2px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23E8F435' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 12px;
+  }
+
+  /* VISUAL DUMBBELL / GYM SHAPE */
+  .gym-visual {
+    margin-top: 2.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    height: 50px;
+  }
+
+  .dumbbell-plate {
+    width: 22px; height: 50px;
+    background: var(--yellow);
+    border-radius: 5px;
+    opacity: 0.9;
+  }
+
+  .dumbbell-bar {
+    flex: 1;
+    height: 10px;
+    background: var(--yellow);
+    opacity: 0.6;
+    max-width: 80px;
+  }
+
+  /* WAITLIST FORM */
+  .wl-fields { display: flex; flex-direction: column; gap: 1.25rem; }
+  .wl-field-group { display: flex; flex-direction: column; gap: 0.75rem; }
+  .wl-input {
+    width: 100%;
+    padding: 0.9rem 1.25rem;
+    background: rgba(10,10,10,0.08);
+    border: 1px solid rgba(10,10,10,0.15);
+    border-radius: 12px;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--black);
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .wl-input::placeholder { color: rgba(10,10,10,0.4); }
+  .wl-input:focus { border-color: rgba(10,10,10,0.4); background: rgba(10,10,10,0.12); }
+  .wl-selects { display: flex; flex-direction: column; gap: 0.75rem; }
+  .wl-select-row { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
+  .wl-radio-label { font-size: 0.82rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: rgba(10,10,10,0.5); min-width: 70px; }
+  .wl-radios { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+  .wl-radio {
+    display: flex; align-items: center; gap: 0.4rem;
+    cursor: pointer;
+    background: rgba(10,10,10,0.08);
+    border: 1px solid rgba(10,10,10,0.12);
+    border-radius: 100px;
+    padding: 0.4rem 1rem;
+    font-size: 0.88rem;
+    color: rgba(10,10,10,0.7);
+    font-weight: 400;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .wl-radio input { display: none; }
+  .wl-radio:has(input:checked) {
+    background: var(--black);
+    border-color: var(--black);
+    color: var(--yellow);
+    font-weight: 500;
+  }
+  .wl-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--black);
+    color: var(--yellow);
+    padding: 1rem 2rem;
+    border-radius: 100px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: -0.01em;
+    border: none;
+    cursor: pointer;
+    align-self: flex-start;
+    transition: transform 0.2s, opacity 0.2s;
+  }
+  .wl-btn:hover { transform: translateY(-2px); }
+  .wl-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  /* CITIES CSS - kept minimal since section removed */
+
+  /* PRICING */
+  #pricing { background: var(--gray); border-top: 1px solid rgba(255,255,255,0.04); }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 4rem;
+  }
+
+  .pricing-card {
+    border-radius: 24px;
+    padding: 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pricing-card.for-users {
+    background: var(--yellow);
+    color: var(--black);
+  }
+
+  .pricing-card.for-gyms {
+    background: var(--black);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: var(--white);
+  }
+
+  .price-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    margin-bottom: 2rem;
+    display: block;
+  }
+
+  .price-main {
+    font-family: var(--font-display);
+    font-size: clamp(2.8rem, 6vw, 4.5rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  .price-main .currency {
+    font-size: 1.5rem;
+    vertical-align: super;
+    font-weight: 600;
+    opacity: 0.8;
+  }
+
+  .price-desc {
+    font-size: 0.9rem;
+    opacity: 0.65;
+    font-weight: 400;
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+  }
+
+  .pricing-card.for-users .price-desc { color: rgba(10,10,10,0.6); }
+
+  .pricing-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .pricing-features li {
+    font-size: 0.92rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 400;
+  }
+
+  .pricing-card.for-users .pricing-features li { color: rgba(10,10,10,0.8); }
+  .pricing-card.for-gyms .pricing-features li { color: rgba(245,245,240,0.7); }
+
+  .check-dot {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pricing-card.for-users .check-dot {
+    background: rgba(0,0,0,0.12);
+  }
+
+  .pricing-card.for-gyms .check-dot {
+    background: rgba(232,244,53,0.15);
+  }
+
+  .check-dot::after {
+    content: '';
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .pricing-card.for-users .check-dot::after { background: rgba(10,10,10,0.7); }
+  .pricing-card.for-gyms .check-dot::after { background: var(--yellow); }
+
+  /* FOOTER */
+  footer {
+    background: var(--black);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 5rem 2.5rem 3rem;
+  }
+
+  .footer-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .footer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 4rem;
+    flex-wrap: wrap;
+    gap: 3rem;
+  }
+
+  .footer-brand .logo {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--white);
+    margin-bottom: 0.75rem;
+  }
+
+  .footer-brand .logo span { color: var(--yellow); }
+
+  .footer-tagline {
+    font-size: 0.88rem;
+    color: var(--gray-text);
+    max-width: 280px;
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  .app-badges {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  .app-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--gray);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 0.7rem 1.25rem;
+    color: var(--gray-text);
+    font-size: 0.82rem;
+    font-weight: 400;
+    transition: all 0.2s;
+    cursor: default;
+  }
+
+  .app-badge:hover {
+    border-color: rgba(232,244,53,0.2);
+    color: var(--white);
+  }
+
+  .app-badge strong {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--gray-text);
+  }
+
+  .app-badge .badge-text { line-height: 1.2; }
+
+  .badge-icon {
+    width: 28px; height: 28px;
+    flex-shrink: 0;
+    opacity: 0.5;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 4rem;
+  }
+
+  .footer-col h4 {
+    font-family: var(--font-display);
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--white);
+    margin-bottom: 1.2rem;
+  }
+
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+
+  .footer-col a {
+    color: var(--gray-text);
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 300;
+    transition: color 0.2s;
+  }
+
+  .footer-col a:hover { color: var(--white); }
+
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.05);
+    padding-top: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-copy {
+    font-size: 0.8rem;
+    color: var(--gray-text);
+    font-weight: 300;
+  }
+
+  .footer-copy span { color: var(--yellow); }
+
+  .footer-urdu {
+    font-size: 1rem;
+    color: rgba(232,244,53,0.4);
+    letter-spacing: 0.05em;
+  }
+
+  /* SCROLL ANIMATIONS */
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  /* DIVIDER */
+  .section-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06) 30%, rgba(255,255,255,0.06) 70%, transparent);
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* OWNERS SECTION */
+  #owners { padding-top: 3rem; }
+
+  /* MOBILE */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+
+    section { padding: 5rem 1.5rem; }
+    #hero { padding: 8rem 1.5rem 5rem; }
+
+    .steps-grid { grid-template-columns: 1fr; }
+    .step-arrow { display: none; }
+    .split-grid { grid-template-columns: 1fr; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .cities-grid { grid-template-columns: 1fr 1fr; }
+    .footer-top { flex-direction: column; }
+    .footer-links { gap: 2rem; flex-wrap: wrap; }
+    .hero-stats { gap: 2rem; flex-wrap: wrap; }
+
+    .nav-mobile-open .nav-links {
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 64px; left: 0; right: 0;
+      background: var(--gray);
+      padding: 2rem 1.5rem;
+      gap: 1.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .cities-grid { grid-template-columns: 1fr; }
+    .feature-card { padding: 2rem; }
+    .pricing-card { padding: 2rem; }
+    .step { padding: 2rem 1.5rem; }
+    footer { padding: 4rem 1.5rem 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav id="main-nav">
+  <div class="nav-logo">Demo<span>Kro</span></div>
+  <ul class="nav-links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#users">For Users</a></li>
+    <li><a href="#owners">For Gyms</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#waitlist" class="nav-cta">Join Waitlist</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg">
+    <div class="grid-pattern"></div>
+    <div class="hero-circle"></div>
+    <div class="hero-circle"></div>
+    <div class="hero-circle"></div>
+    <div class="hero-dot"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-label">Now in Karachi &amp; Lahore</div>
+    <h1>
+      Try before<br>
+      you <span class="accent">commit.</span>
+      <span class="line2">No awkward walk-ins.</span>
+    </h1>
+    <p class="hero-sub">Book a real gym demo session in Karachi or Lahore. Show up, try it out, decide later. Zero pressure, full experience.</p>
+    <div class="hero-ctas">
+      <a href="#waitlist" class="btn-primary">
+        Join the Waitlist
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="#waitlist" class="btn-secondary">
+        List Your Gym
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="section-inner">
+    <span class="section-tag reveal">The Process</span>
+    <h2 class="reveal reveal-delay-1">Three steps.<br>That's it.</h2>
+    <p class="section-sub reveal reveal-delay-2">No calls, no tours, no pressure from sales staff. Just browse, book, and show up.</p>
+
+    <div class="steps-grid reveal reveal-delay-2">
+      <div class="step">
+        <div class="step-arrow">
+          <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+        <span class="step-num">01</span>
+        <div class="step-icon">
+          <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </div>
+        <h3>Browse Gyms</h3>
+        <p>Pick your city — Karachi or Lahore — and explore gyms near you. See real prices and facilities upfront before you commit to anything.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-arrow">
+          <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+        <span class="step-num">02</span>
+        <div class="step-icon">
+          <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        </div>
+        <h3>Book &amp; Pay</h3>
+        <p>Pick a date and time. Pay the demo fee online — secure, instant, and no negotiations. You'll get a confirmation with all details.</p>
+      </div>
+
+      <div class="step">
+        <span class="step-num">03</span>
+        <div class="step-icon">
+          <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M6 4v6a6 6 0 0 0 12 0V4"/><path d="M4 20h16"/></svg>
+        </div>
+        <h3>Attend Demo</h3>
+        <p>Show up, use the gym for a full session. No salesperson hovering. Just you and the equipment. Then decide — no follow-up calls guaranteed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOR USERS -->
+<section id="users">
+  <div class="section-inner">
+    <span class="section-tag reveal">For You</span>
+    <h2 class="reveal reveal-delay-1">Find your gym<br>without the cringe.</h2>
+
+    <div class="split-grid">
+      <div class="feature-card reveal reveal-delay-1">
+        <span class="card-label">For Gym-Seekers</span>
+        <h3>Everything you need, nothing you don't.</h3>
+        <ul class="feature-list">
+          <li>Browse gyms by city — Karachi or Lahore</li>
+          <li>See real photos, equipment lists and facilities before booking</li>
+          <li>Instant confirmation — no waiting for callbacks</li>
+          <li>Zero commitment after the demo. No one will chase you</li>
+          <li>Safe online payment — no cash on arrival</li>
+          <li>Compare multiple gyms in one place before deciding</li>
+        </ul>
+        <div class="gym-visual" style="margin-top:2.5rem">
+          <div class="dumbbell-plate"></div>
+          <div class="dumbbell-bar"></div>
+          <div class="dumbbell-plate" style="width:34px;height:70px;border-radius:8px"></div>
+          <div class="dumbbell-plate" style="width:34px;height:70px;border-radius:8px;margin-left:0"></div>
+          <div class="dumbbell-bar"></div>
+          <div class="dumbbell-plate"></div>
+        </div>
+      </div>
+
+      <div class="feature-card reveal reveal-delay-2" style="display:flex;flex-direction:column;justify-content:space-between">
+        <div>
+          <span class="card-label">The Promise</span>
+          <h3>We built this because gym tours are terrible.</h3>
+          <p style="font-size:0.95rem;color:var(--gray-text);line-height:1.8;font-weight:300;margin-bottom:1.5rem">
+            You walk in. A salesperson appears. They show you the nicest corner. You say "I'll think about it." They call you four times. You avoid that street now.
+          </p>
+          <p style="font-size:0.95rem;color:rgba(245,245,240,0.6);line-height:1.8;font-weight:300">
+            DemoKro ends that. Pay a small fee, attend a proper session on your own, and decide with full information. That's it.
+          </p>
+        </div>
+        <div style="margin-top:2.5rem;padding:1.75rem;background:rgba(232,244,53,0.06);border:1px solid rgba(232,244,53,0.12);border-radius:16px">
+          <p style="font-size:1.05rem;font-family:var(--font-display);font-weight:600;letter-spacing:-0.01em;color:var(--yellow);line-height:1.5">
+            "Book a gym demo. No commitment, no awkward walk-ins."
+          </p>
+          <p style="font-size:0.8rem;color:var(--gray-text);margin-top:0.75rem;font-weight:300">— DemoKro</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOR GYM OWNERS -->
+<section id="owners">
+  <div class="section-inner">
+    <div class="section-divider"></div>
+    <div style="margin-top:5rem">
+      <span class="section-tag reveal">For Gyms</span>
+      <h2 class="reveal reveal-delay-1">Turn browsers into<br><span style="color:var(--yellow)">paying members.</span></h2>
+      <p class="section-sub reveal reveal-delay-2">Stop chasing leads. DemoKro brings you people who are already serious enough to pay for a trial.</p>
+
+      <div class="split-grid" style="margin-top:3rem">
+        <div class="feature-card reveal reveal-delay-2">
+          <span class="card-label">Owner Benefits</span>
+          <h3>Qualified leads. Every single time.</h3>
+          <ul class="feature-list">
+            <li>Every demo booking is a paid, qualified prospect — not a tire-kicker</li>
+            <li>Set your own demo price — you're in control</li>
+            <li>We collect payment upfront, you receive your cut within 48 hours</li>
+            <li>Simple dashboard — view bookings, manage slots, track revenue</li>
+            <li>No setup costs, no monthly fees — we only earn when you earn</li>
+            <li>Get listed in front of thousands of gym-seekers in your city</li>
+          </ul>
+        </div>
+
+        <div class="feature-card reveal reveal-delay-3" style="background:var(--yellow);border-color:transparent">
+          <span class="card-label" style="color:rgba(10,10,10,0.5)">Platform Model</span>
+          <h3 style="color:var(--black)">You set the price.<br>We handle the rest.</h3>
+          <ul class="feature-list" style="margin-top:1.5rem">
+            <li style="color:rgba(10,10,10,0.75)">
+              <span style="width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,0.12);flex-shrink:0;display:inline-block;margin-right:0.25rem"></span>
+              List your gym for free — no upfront cost
+            </li>
+            <li style="color:rgba(10,10,10,0.75)">
+              <span style="width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,0.12);flex-shrink:0;display:inline-block;margin-right:0.25rem"></span>
+              DemoKro takes 10% per booking only
+            </li>
+            <li style="color:rgba(10,10,10,0.75)">
+              <span style="width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,0.12);flex-shrink:0;display:inline-block;margin-right:0.25rem"></span>
+              You receive 90% directly to your account
+            </li>
+            <li style="color:rgba(10,10,10,0.75)">
+              <span style="width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,0.12);flex-shrink:0;display:inline-block;margin-right:0.25rem"></span>
+              Zero risk — only pay when you earn
+            </li>
+          </ul>
+          <div style="margin-top:2.5rem">
+            <a href="#" class="btn-primary" style="background:var(--black);color:var(--yellow)">
+              List Your Gym
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- WAITLIST -->
+<section id="waitlist" style="background:var(--yellow);padding:7rem 2.5rem">
+  <div class="section-inner" style="max-width:700px">
+    <span class="section-tag reveal" style="color:rgba(10,10,10,0.5)">Early Access</span>
+    <h2 class="reveal reveal-delay-1" style="color:var(--black)">Be the first to<br>know when we launch.</h2>
+    <p class="reveal reveal-delay-2" style="font-size:1.05rem;color:rgba(10,10,10,0.6);font-weight:300;line-height:1.7;margin-bottom:2.5rem;max-width:480px">Whether you're looking for a gym or you own one — drop your details and we'll reach out the moment DemoKro goes live in your city.</p>
+    <form id="waitlist-form" action="https://formspree.io/f/mgoqelnn" method="POST" class="reveal reveal-delay-3">
+      <div class="wl-fields">
+        <div class="wl-field-group">
+          <input type="text" name="name" placeholder="Your name" required class="wl-input" />
+          <input type="email" name="email" placeholder="Email address" required class="wl-input" />
+          <input type="tel" name="phone" placeholder="WhatsApp number (optional)" class="wl-input" />
+        </div>
+        <div class="wl-selects">
+          <div class="wl-select-row">
+            <p class="wl-radio-label">I am a&hellip;</p>
+            <div class="wl-radios">
+              <label class="wl-radio"><input type="radio" name="type" value="gym-seeker" checked /><span>Gym-Seeker</span></label>
+              <label class="wl-radio"><input type="radio" name="type" value="gym-owner" /><span>Gym Owner</span></label>
+            </div>
+          </div>
+          <div class="wl-select-row">
+            <p class="wl-radio-label">City</p>
+            <div class="wl-radios">
+              <label class="wl-radio"><input type="radio" name="city" value="karachi" checked /><span>Karachi</span></label>
+              <label class="wl-radio"><input type="radio" name="city" value="lahore" /><span>Lahore</span></label>
+              <label class="wl-radio" id="other-radio-label"><input type="radio" name="city" value="other" id="other-radio" /><span>Other</span></label>
+              <input type="text" name="city_other" id="other-city-input" placeholder="Which city?" class="wl-input" style="display:none;width:auto;flex:1;min-width:140px;padding:0.4rem 0.9rem;font-size:0.88rem" />
+            </div>
+          </div>
+        </div>
+        <button type="submit" class="wl-btn" id="wl-submit">
+          Join Waitlist
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </form>
+    <div id="wl-success" style="display:none;margin-top:1.5rem;padding:1.5rem 2rem;background:rgba(10,10,10,0.08);border-radius:16px;border:1px solid rgba(10,10,10,0.15)">
+      <p style="font-family:var(--font-display);font-size:1.2rem;font-weight:700;color:var(--black);margin-bottom:0.4rem">You're on the list.</p>
+      <p style="font-size:0.9rem;color:rgba(10,10,10,0.6);font-weight:300">We'll WhatsApp or email you when DemoKro goes live. Tell a gym-going friend.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="section-inner">
+    <span class="section-tag reveal">Pricing</span>
+    <h2 class="reveal reveal-delay-1">Simple, fair,<br>transparent.</h2>
+    <p class="section-sub reveal reveal-delay-2">No hidden fees. No membership traps. Just one small demo fee and you're in.</p>
+
+    <div class="pricing-grid reveal reveal-delay-2">
+      <div class="pricing-card for-users">
+        <span class="price-label" style="color:rgba(10,10,10,0.5)">For Gym-Seekers</span>
+        <span class="price-main" style="color:var(--black)">
+          <span class="currency" style="color:rgba(10,10,10,0.6)">PKR </span>Gym Sets Price
+        </span>
+        <p class="price-desc">Each gym sets their own demo fee. You pay once, attend the full session, decide freely.</p>
+        <ul class="pricing-features">
+          <li style="color:rgba(10,10,10,0.8)">
+            <span class="check-dot" style="background:rgba(0,0,0,0.1)"></span>
+            One fee covers the full demo session
+          </li>
+          <li style="color:rgba(10,10,10,0.8)">
+            <span class="check-dot" style="background:rgba(0,0,0,0.1)"></span>
+            Price set transparently before you book
+          </li>
+          <li style="color:rgba(10,10,10,0.8)">
+            <span class="check-dot" style="background:rgba(0,0,0,0.1)"></span>
+            No commitment to membership after
+          </li>
+          <li style="color:rgba(10,10,10,0.8)">
+            <span class="check-dot" style="background:rgba(0,0,0,0.1)"></span>
+            Secure online payment via DemoKro
+          </li>
+        </ul>
+      </div>
+
+      <div class="pricing-card for-gyms">
+        <span class="price-label" style="color:rgba(245,245,240,0.35)">For Gym Owners</span>
+        <span class="price-main" style="color:var(--yellow)">
+          10<span style="font-size:2rem;vertical-align:middle;font-weight:600">%</span>
+        </span>
+        <p class="price-desc">Only on confirmed bookings. You keep 90%, we keep 10%. No monthly fees, ever.</p>
+        <ul class="pricing-features">
+          <li>
+            <span class="check-dot"></span>
+            Free listing — no setup costs
+          </li>
+          <li>
+            <span class="check-dot"></span>
+            You set your own demo price
+          </li>
+          <li>
+            <span class="check-dot"></span>
+            Get paid within 48 hours of session
+          </li>
+          <li>
+            <span class="check-dot"></span>
+            Cancel or pause your listing anytime
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="logo">Demo<span>Kro</span></div>
+        <p class="footer-tagline">Book a gym demo. No commitment, no awkward walk-ins.</p>
+        <div class="app-badges">
+          <div class="app-badge">
+            <svg class="badge-icon" viewBox="0 0 24 24" fill="currentColor" style="color:var(--gray-text)">
+              <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+            </svg>
+            <div class="badge-text">
+              <strong>App Store</strong>
+              Coming Soon
+            </div>
+          </div>
+          <div class="app-badge">
+            <svg class="badge-icon" viewBox="0 0 24 24" fill="currentColor" style="color:var(--gray-text)">
+              <path d="M3.18 23.76c.3.17.65.19.98.06l12.49-7.2-2.61-2.61-10.86 9.75zM.54 1.54C.2 1.87 0 2.4 0 3.09v17.82c0 .69.2 1.22.55 1.55l.08.07 9.98-9.98v-.23L.62 1.47l-.08.07zm20.01 9.06-2.62-1.52-2.91 2.91 2.91 2.91 2.64-1.53c.75-.44.75-1.34-.02-1.77zM4.16.24L16.65 7.44l-2.61 2.61L3.18.3C3.51.17 3.86.19 4.16.36V.24z"/>
+            </svg>
+            <div class="badge-text">
+              <strong>Google Play</strong>
+              Coming Soon
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="#how">How it Works</a></li>
+            <li><a href="#users">For Users</a></li>
+            <li><a href="#owners">For Gyms</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#waitlist">Join Waitlist</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2025 DemoKro. Made in <span>Pakistan</span> 🇵🇰</p>
+      <p class="footer-urdu">ڈیمو کرو</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const hamburger = document.getElementById('hamburger');
+  const nav = document.getElementById('main-nav');
+
+  hamburger.addEventListener('click', () => {
+    nav.classList.toggle('nav-mobile-open');
+  });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  window.addEventListener('scroll', () => {
+    const scrolled = window.scrollY > 60;
+    nav.style.borderBottomColor = scrolled ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.05)';
+  });
+
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      const href = this.getAttribute('href');
+      if (href === '#') return;
+      e.preventDefault();
+      const target = document.querySelector(href);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        nav.classList.remove('nav-mobile-open');
+      }
+    });
+  });
+
+  document.querySelectorAll('input[name="city"]').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+      var otherInput = document.getElementById('other-city-input');
+      if (this.value === 'other') {
+        otherInput.style.display = 'block';
+        otherInput.focus();
+      } else {
+        otherInput.style.display = 'none';
+        otherInput.value = '';
+      }
+    });
+  });
+
+  const form = document.getElementById('waitlist-form');
+  const success = document.getElementById('wl-success');
+  if (form) {
+    form.setAttribute('target', 'wl-iframe');
+    var iframe = document.createElement('iframe');
+    iframe.name = 'wl-iframe';
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+    form.addEventListener('submit', function() {
+      setTimeout(function() {
+        form.style.display = 'none';
+        success.style.display = 'block';
+      }, 1200);
+    });
+  }
+</script>
+</body>
+</html>
